@@ -239,7 +239,12 @@ public class DownloaderV2A {
 //            fut.whenComplete(onComplete);
             BH bh = new BH(dlId, u, fut, perUrl);
             futures.add(fut);
-            client.sendAsync(req, bh).orTimeout(15, TimeUnit.MINUTES);
+            client.sendAsync(req, bh).orTimeout(15, TimeUnit.MINUTES).exceptionally((e) -> {
+                if(!fut.isCancelled()){
+                    fut.cancel(true);
+                }
+                return null;
+            });
         }
         return result;
     }
