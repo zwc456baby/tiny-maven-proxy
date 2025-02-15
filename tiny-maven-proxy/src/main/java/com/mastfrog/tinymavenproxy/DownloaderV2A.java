@@ -235,11 +235,11 @@ public class DownloaderV2A {
                     result.completeExceptionally(ex);
                 }
 //                }
-            });
+            }).orTimeout(20, TimeUnit.MINUTES);
 //            fut.whenComplete(onComplete);
             BH bh = new BH(dlId, u, fut, perUrl);
             futures.add(fut);
-            client.sendAsync(req, bh);
+            client.sendAsync(req, bh).orTimeout(15, TimeUnit.MINUTES);
         }
         return result;
     }
