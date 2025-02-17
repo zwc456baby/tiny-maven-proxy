@@ -26,6 +26,7 @@ package com.mastfrog.tinymavenproxy;
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
 import com.google.inject.Inject;
+import com.google.inject.Singleton;
 import com.google.inject.name.Named;
 import com.mastfrog.acteur.errors.ResponseException;
 import com.mastfrog.acteur.headers.Headers;
@@ -75,6 +76,7 @@ import java.util.logging.Logger;
  *
  * @author Tim Boudreau
  */
+@Singleton
 public class DownloaderV2A {
 
     private final HttpClient client;

@@ -24,6 +24,7 @@
 package com.mastfrog.tinymavenproxy;
 
 import com.google.inject.Inject;
+import com.google.inject.Singleton;
 import com.google.inject.name.Named;
 import com.mastfrog.acteur.server.ServerModule;
 import static com.mastfrog.tinymavenproxy.GetActeur.isGzipCacheFile;
@@ -48,6 +49,7 @@ import java.util.concurrent.ExecutorService;
  *
  * @author Tim Boudreau
  */
+@Singleton
 public class FileFinder {
 
     private final Config config;
