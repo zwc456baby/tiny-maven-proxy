@@ -87,7 +87,7 @@ public class DownloaderV2A {
     static final AtomicLong counter = new AtomicLong();
     private final TempFiles tempFiles;
     private final String runId;
-    private final String userAgent;
+    // private final String userAgent;
     private final ExecutorService pool;
 
     @Inject
@@ -104,7 +104,7 @@ public class DownloaderV2A {
         this.control = control;
         this.runId = runId;
         this.tempFiles = tempFiles;
-        userAgent = "tmpx-" + ver.version;
+        // userAgent = "tmpx-" + ver.version;
     }
 
     String nextDownloadId() {
@@ -115,8 +115,8 @@ public class DownloaderV2A {
         return failedURLs.getIfPresent(path) != null;
     }
 
-    CompletableFuture<TempFile> download(Path path, RequestID rid, DownloadReceiver recv) throws URISyntaxException {
-        CompletableFuture<TempFile> tf = download(path, rid);
+    CompletableFuture<TempFile> download(Path path, RequestID rid, String userAgent, DownloadReceiver recv) throws URISyntaxException {
+        CompletableFuture<TempFile> tf = download(path, rid, userAgent);
         Logs requestLog = logger.child("download", rid);
         tf.whenComplete((file, thrown) -> {
             if (thrown != null) {
@@ -137,7 +137,7 @@ public class DownloaderV2A {
         return tf;
     }
 
-    public CompletableFuture<TempFile> download(Path path, RequestID rid) throws URISyntaxException {
+    public CompletableFuture<TempFile> download(Path path, RequestID rid, String userAgent) throws URISyntaxException {
         Collection<URL> urls = config.withPath(path);
         List<CompletableFuture<TempFile>> futures = new ArrayList<>(urls.size());
         Int remainder = Int.createAtomic();

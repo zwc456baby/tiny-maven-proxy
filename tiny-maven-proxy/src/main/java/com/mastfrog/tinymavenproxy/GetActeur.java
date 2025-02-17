@@ -179,7 +179,8 @@ public class GetActeur extends Acteur {
             Path pth = path.elideEmptyElements();
             def.defer((Resumer res) -> {
                 config.debugLog("  defer and download ", pth);
-                CompletableFuture<TempFile> l = dl.download(pth, id, new DownloadReceiverImpl(res, config));
+                CompletableFuture<TempFile> l = dl.download(pth, id, req.header(Headers.USER_AGENT).toString(),
+                        new DownloadReceiverImpl(res, config));
                 req.channel().closeFuture().addListener(cl -> {
                     l.cancel(false);
                 });
