@@ -122,8 +122,10 @@ public class DownloaderV2A {
         Logs requestLog = logger.child("download", rid);
         tf.whenComplete((file, thrown) -> {
             if (thrown != null) {
-                failedURLs.put(path, path);
 //                System.out.println("DO FAIL FOR " + thrown + " " + path);
+                if (!(thrown instanceof CancellationException)) {
+                    failedURLs.put(path, path);
+                }
                 recv.failed(GONE, thrown.getMessage());
             } else if (file != null) {
                 HttpResponseStatus status = file.info().map(info -> {
@@ -218,7 +220,12 @@ public class DownloaderV2A {
                         lr.add("cancelled");
                         if (remaining == 0) {
 //                                System.out.println("REMAINING 0 COMPLETE 1 " + path);
-                            result.completeExceptionally(new ResponseException(GONE, "No result " + path));
+                            result.completeExceptionally(new CancellationException("No result " + path));
+                        }
+                    } else if (thrown instanceof ResponseException) {
+                        lr.add("faild");
+                        if (remaining == 0) {
+                            result.completeExceptionally(thrown);
                         }
                     } else if (thrown != null) {
                         if (remaining == 0) {
@@ -283,7 +290,9 @@ public class DownloaderV2A {
                 logs.warn("request-failed")
                         .add("status", info.statusCode()).close();
 //                        .add("headers", info.headers().map()).close();
-                result.cancel(true);
+                result.completeExceptionally(new ResponseException(HttpResponseStatus.valueOf(info.statusCode()),
+                        HttpResponseStatus.valueOf(info.statusCode()).reasonPhrase()));
+                // result.cancel(true);
                 return NO_OP;
             } else {
                 logs.info("potential-success")
