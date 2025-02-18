@@ -220,7 +220,9 @@ public class DownloaderV2A {
                         lr.add("cancelled");
                         if (remaining == 0) {
 //                                System.out.println("REMAINING 0 COMPLETE 1 " + path);
-                            result.completeExceptionally(new CancellationException("No result " + path));
+                            // result.completeExceptionally(new CancellationException("No result " + path));
+                            // if timeout，cache No result url
+                            result.completeExceptionally(new ResponseException(GONE, "No result " + path));
                         }
                     } else if (thrown instanceof ResponseException) {
                         lr.add("faild");
